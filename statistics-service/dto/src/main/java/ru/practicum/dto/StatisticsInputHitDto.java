@@ -17,13 +17,13 @@ import java.time.LocalDateTime;
 @Builder(toBuilder = true)
 public class StatisticsInputHitDto {
     @NotNull(message = "Cannot be null or empty")
-    @Size(min = 1, max = 200)
+    @Size(min = 1, max = 300)
     private String app;
     @NotNull(message = "Cannot be null or empty")
-    @Size(min = 1, max = 200)
+    @Size(min = 1, max = 300)
     private String uri;
     @NotNull(message = "Cannot be null or empty")
-    @Size(min = 1, max = 200)
+    @Size(min = 1, max = 300)
     private String ip;
     @NotNull(message = "Cannot be null or empty")
     @PastOrPresent

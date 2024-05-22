@@ -25,7 +25,7 @@ public class StatisticsServiceImpl implements StatisticsService {
 
     @Override
     public List<StatisticsOutputDto> getStatistics(LocalDateTime start, LocalDateTime end, List<String> uris, Boolean unique) {
-        if (uris.isEmpty()) {
+        if (uris == null) {
             if (unique) {
                 return statisticsStorage.findAllUniqueStatisticsBetweenStartAndEnd(start, end);
             } else {

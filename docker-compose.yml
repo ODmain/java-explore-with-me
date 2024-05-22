@@ -1,59 +1,26 @@
 version: '3.8'
 
 services:
-  statistics-server:
+  statistics-service:
     build: ./statistics-service/service
     image: service
-    container_name: statistics-service
-    ports:
-      - "8080:8080"
-    depends_on:
-      - statistics-db
-    environment:
-      - POSTGRES_DB=explore
-      - POSTGRES_USER=explore
-      - POSTGRES_PASSWORD=explore
-
-  statistics-client:
-    build: ./statistics-service/client
-    image: client
-    container_name: statistics-client
-    ports:
-      - "8181:8181"
-    depends_on:
-      - statistics-server
-    environment:
-      - EXPLORE_WITH_ME_STATISTICS_SERVICE_URL=http://statistics-server:8080
-
-  statistics-db:
-    image: postgres:14-alpine
-    container_name: statistics-client
-    ports:
-      - "6541:5432"
-    environment:
-      - POSTGRES_DB=explore
-      - POSTGRES_USER=explore
-      - POSTGRES_PASSWORD=explore
-
-  main-service:
-    build: ./main-service
-    image: main-service
-    container_name: main-service
+    container_name: "statistics-service"
     ports:
       - "9090:9090"
     depends_on:
-      - main-db
+      - statistics-db
     environment:
-      - SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.postgresql.Driver
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5433/explore
+      - DB_HOST=stats-db
+      - DB_PORT=5432
+      - DB_NAME=explore
       - SPRING_DATASOURCE_USERNAME=explore
       - SPRING_DATASOURCE_PASSWORD=explore
 
-  main-db:
-    image: postgres:16.1
-    container_name: explore-db
+  statistics-db:
+    image: postgres:14-alpine
+    container_name: "statistics-db"
     ports:
-      - "6542:5433"
+      - "6541:5432"
     environment:
       - POSTGRES_DB=explore
       - POSTGRES_USER=explore

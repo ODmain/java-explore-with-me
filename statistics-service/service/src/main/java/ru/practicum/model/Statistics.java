@@ -17,11 +17,11 @@ public class Statistics {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false, length = 200)
+    @Column(nullable = false, length = 300)
     private String app;
-    @Column(nullable = false, length = 200)
+    @Column(nullable = false, length = 300)
     private String uri;
-    @Column(nullable = false, length = 200)
+    @Column(nullable = false, length = 300)
     private String ip;
     @Column(nullable = false)
     private LocalDateTime timestamp;
