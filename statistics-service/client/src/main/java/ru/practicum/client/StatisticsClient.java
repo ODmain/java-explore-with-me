@@ -9,7 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import ru.practicum.dto.StatisticsInputHitDto;
 
-import java.time.LocalDateTime;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
@@ -17,7 +18,7 @@ import java.util.Map;
 public class StatisticsClient extends BaseClient {
 
     @Autowired
-    public StatisticsClient(@Value("${shareit-server.url}") String serverUrl, RestTemplateBuilder builder) {
+    public StatisticsClient(@Value("${statistics-service.url}") String serverUrl, RestTemplateBuilder builder) {
         super(
                 builder
                         .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl))
@@ -30,19 +31,22 @@ public class StatisticsClient extends BaseClient {
         post(statisticsInputHitDto);
     }
 
-    public ResponseEntity<Object> getStatistics(LocalDateTime start, LocalDateTime end, List<String> uris, Boolean unique) {
-        if (uris.isEmpty()) {
+    public ResponseEntity<Object> getStatistics(String start, String end, List<String> uris, Boolean unique) {
+        String encodedStart = URLEncoder.encode(start, StandardCharsets.UTF_8);
+        String encodedEnd = URLEncoder.encode(end, StandardCharsets.UTF_8);
+        if (uris == null || uris.isEmpty()) {
             Map<String, Object> parameters = Map.of(
-                    "start", start,
-                    "end", end,
+                    "start", encodedStart,
+                    "end", encodedEnd,
                     "unique", unique);
             return get("/stats?start={start}&end={end}&unique={unique}", parameters);
+        } else {
+            Map<String, Object> parameters = Map.of(
+                    "start", encodedStart,
+                    "end", encodedEnd,
+                    "uris", uris,
+                    "unique", unique);
+            return get("/stats?start={start}&end={end}&uris={uris}&unique={unique}", parameters);
         }
-        Map<String, Object> parameters = Map.of(
-                "start", start,
-                "end", end,
-                "uris", String.join(",", uris),
-                "unique", unique);
-        return get("/stats?start={start}&end={end}&uris{uris}&unique={unique}", parameters);
     }
 }

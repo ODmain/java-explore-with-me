@@ -2,10 +2,10 @@ package ru.practicum.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.dto.StatisticsInputHitDto;
 import ru.practicum.dto.StatisticsOutputDto;
 import ru.practicum.mapper.StatisticsMapper;
-import ru.practicum.model.Statistics;
 import ru.practicum.storage.StatisticsStorage;
 
 import java.time.LocalDateTime;
@@ -19,13 +19,13 @@ public class StatisticsServiceImpl implements StatisticsService {
 
     @Override
     public void createHit(StatisticsInputHitDto statisticsInputHitDto) {
-        Statistics statistics = statisticsMapper.toStatistics(statisticsInputHitDto);
-        statisticsStorage.save(statistics);
+        statisticsStorage.save(statisticsMapper.toStatistics(statisticsInputHitDto));
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<StatisticsOutputDto> getStatistics(LocalDateTime start, LocalDateTime end, List<String> uris, Boolean unique) {
-        if (uris == null) {
+        if (uris == null || uris.isEmpty()) {
             if (unique) {
                 return statisticsStorage.findAllUniqueStatisticsBetweenStartAndEnd(start, end);
             } else {
