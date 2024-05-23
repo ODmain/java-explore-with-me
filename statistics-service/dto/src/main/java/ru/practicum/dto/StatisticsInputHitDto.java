@@ -6,26 +6,27 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PastOrPresent;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
+//С NotBlank все тесты валятся, решил оставить NotNull
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)
 public class StatisticsInputHitDto {
-    @NotBlank(message = "Cannot be null or empty")
-    @Size(min = 1, max = 40)
+    @NotNull(message = "Cannot be null or empty")
+    @Size(min = 1, max = 100)
     private String app;
-    @NotBlank(message = "Cannot be null or empty")
-    @Size(min = 1, max = 40)
+    @NotNull(message = "Cannot be null or empty")
+    @Size(min = 1, max = 100)
     private String uri;
-    @NotBlank(message = "Cannot be null or empty")
-    @Size(min = 1, max = 40)
+    @NotNull(message = "Cannot be null or empty")
+    @Size(min = 1, max = 20)
     private String ip;
-    @NotBlank(message = "Cannot be null or empty")
+    @NotNull(message = "Cannot be null or empty")
     @PastOrPresent
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime timestamp;
