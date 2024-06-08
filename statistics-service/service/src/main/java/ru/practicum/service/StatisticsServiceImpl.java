@@ -13,17 +13,18 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class StatisticsServiceImpl implements StatisticsService {
-    private final StatisticsMapper statisticsMapper;
     private final StatisticsStorage statisticsStorage;
+    private final StatisticsMapper statisticsMapper;
 
     @Override
+    @Transactional
     public void createHit(StatisticsInputHitDto statisticsInputHitDto) {
         statisticsStorage.save(statisticsMapper.toStatistics(statisticsInputHitDto));
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<StatisticsOutputDto> getStatistics(LocalDateTime start, LocalDateTime end, List<String> uris, Boolean unique) {
         if (uris == null || uris.isEmpty()) {
             if (unique) {
