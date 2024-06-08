@@ -11,6 +11,7 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface CategoryMapper {
     CategoryOutputDto toCategoryOutputDto(Category category);
+
     @Mapping(target = "id", ignore = true)
     Category toCategoryFromInput(CategoryInputDto categoryInputDto);
 
