@@ -13,8 +13,6 @@ import java.util.List;
 @Builder(toBuilder = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class EventUpdateRequestInputDto {
-    @NotNull
     List<Long> requestIds;
-    @NotNull
     Status status;
 }

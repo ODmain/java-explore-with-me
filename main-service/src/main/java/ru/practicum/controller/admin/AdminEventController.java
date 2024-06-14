@@ -10,6 +10,8 @@ import ru.practicum.dto.event.UpdateEventDto;
 import ru.practicum.service.api.admin.AdminEventService;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -33,9 +35,8 @@ public class AdminEventController {
                                           @RequestParam(required = false) List<Long> categories,
                                           @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeStart,
                                           @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeEnd,
-                                          @RequestParam(required = false, defaultValue = "0") Integer from,
-                                          @RequestParam(required = false, defaultValue = "10") Integer size) {
+                                          @RequestParam(defaultValue = "0") @PositiveOrZero Integer from,
+                                          @RequestParam(defaultValue = "10") @Positive Integer size) {
         return adminEventService.getEvents(users, states, categories, rangeStart, rangeEnd, from, size);
     }
-
 }

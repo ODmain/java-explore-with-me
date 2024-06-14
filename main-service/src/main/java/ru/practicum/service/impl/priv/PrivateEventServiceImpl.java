@@ -23,6 +23,7 @@ import ru.practicum.storage.RequestStorage;
 import ru.practicum.storage.UserStorage;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -149,47 +150,34 @@ public class PrivateEventServiceImpl implements PrivateEventService {
         Event event = validEvent(eventId);
         validOwner(userId, event.getInitiator().getId());
         EventUpdateRequestOutputDto eventUpdateRequestOutputDto = new EventUpdateRequestOutputDto();
-
         if (eventUpdateRequestInputDto.getStatus().equals(Status.CONFIRMED)) {
-            if (event.getParticipantLimit() != 0) {
-                Long guests = requestStorage.countAllByEventIdAndStatus(event.getId(),
-                        eventUpdateRequestInputDto.getStatus()) + eventUpdateRequestInputDto.getRequestIds().size();
-                if (guests > event.getParticipantLimit()) {
-                    throw new ValidException("Participant limit exceeded", HttpStatus.CONFLICT);
+            List<Request> requests = requestStorage.findAllByIdInAndEventId(eventUpdateRequestInputDto
+                    .getRequestIds(), eventId);
+            for (Request request : requests) {
+                if (!request.getStatus().equals(Status.PENDING)) {
+                    throw new ValidException("Can't reject request with status confirmed", HttpStatus.CONFLICT);
                 }
-                List<Request> requests = requestStorage.findAllByIdInAndEventId(eventUpdateRequestInputDto
-                        .getRequestIds(), eventId);
-                for (Request request : requests) {
-                    if (!request.getStatus().equals(Status.PENDING)) {
-                        throw new ValidException("Request status is invalid", HttpStatus.CONFLICT);
-                    }
+                if (!request.getEvent().getRequestModeration() || request.getEvent().getParticipantLimit() == 0) {
                     request.setStatus(Status.CONFIRMED);
                 }
-                requestStorage.saveAll(requests);
-                eventUpdateRequestOutputDto.setConfirmedRequests(requestMapper.toRequestOutputDtoList(requests));
-                if (guests.equals(event.getParticipantLimit())) {
-                    List<Request> requestList = requestStorage.findAllByEventIdAndStatus(eventId, Status.PENDING);
-                    for (Request request : requestList) {
-                        request.setStatus(Status.REJECTED);
-                    }
-                    requestStorage.saveAll(requestList);
-                    eventUpdateRequestOutputDto.setRejectedRequests(requestMapper.toRequestOutputDtoList(requestList));
+                if (request.getEvent().getParticipantLimit() != 0 && requestStorage.countRequestByEventIdAndStatus(eventId, Status.CONFIRMED)
+                        >= (request.getEvent().getParticipantLimit())) {
+                    request.setStatus(Status.REJECTED);
+                    throw new ValidException("Guest's limit exceeded", HttpStatus.CONFLICT);
+                } else {
+                    request.setStatus(Status.CONFIRMED);
                 }
-                return eventUpdateRequestOutputDto;
-            } else {
-                List<Request> requests = requestStorage.findAllByIdInAndEventId(eventUpdateRequestInputDto
-                        .getRequestIds(), eventId);
-                for (Request request : requests) {
-                    request.setStatus(eventUpdateRequestInputDto.getStatus());
-                }
-                eventUpdateRequestOutputDto.setConfirmedRequests(requestMapper.toRequestOutputDtoList(requestStorage
-                        .saveAll(requests)));
-                return eventUpdateRequestOutputDto;
             }
+            eventUpdateRequestOutputDto.setConfirmedRequests(requestMapper.toRequestOutputDtoList(requestStorage
+                    .saveAll(requests)));
+            return eventUpdateRequestOutputDto;
         } else if (eventUpdateRequestInputDto.getStatus().equals(Status.REJECTED)) {
             List<Request> requests = requestStorage.findAllByIdInAndEventId(eventUpdateRequestInputDto
                     .getRequestIds(), eventId);
             for (Request request : requests) {
+                if (request.getStatus().equals(Status.CONFIRMED)) {
+                    throw new ValidException("Can't reject request with status confirmed", HttpStatus.CONFLICT);
+                }
                 request.setStatus(Status.REJECTED);
             }
             eventUpdateRequestOutputDto.setRejectedRequests(requestMapper.toRequestOutputDtoList(requestStorage

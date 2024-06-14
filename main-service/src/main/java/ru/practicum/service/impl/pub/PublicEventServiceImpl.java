@@ -19,6 +19,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -33,30 +34,39 @@ public class PublicEventServiceImpl implements PublicEventService {
                                                  Boolean paid, LocalDateTime rangeStart,
                                                  LocalDateTime rangeEnd, Boolean onlyAvailable,
                                                  String sort, Integer from, Integer size, HttpServletRequest servletRequest) {
-        if (rangeEnd.isBefore(rangeStart)) {
-            throw new ValidException("Start date is before end date", HttpStatus.BAD_REQUEST);
+        if (rangeEnd != null && rangeStart != null) {
+            if (rangeEnd.isBefore(rangeStart)) {
+                throw new ValidException("Start date is before end date", HttpStatus.BAD_REQUEST);
+            }
         }
 
         Pageable pageable = PageRequest.of(from / size, size);
-//        List<Event> events = eventStorage.(text, categories, paid, rangeStart, rangeEnd, pageable)
-//                .getContent();
-//        if (onlyAvailable) {
-//            events.removeIf(event -> event.getConfirmedRequests().equals(event.getParticipantLimit()));
-//        }
-//        if (sort != null) {
-//            if (sort.equals("VIEWS")) {
-//                events.sort(Comparator.comparing(Event::getViews));
-//                return eventMapper.toEventByIdOutputDtoList(events);
-//
-//            } else if (sort.equals("EVENT_DATE")) {
-//                events.sort(Comparator.comparing(Event::getEventDate));
-//                return eventMapper.toEventByIdOutputDtoList(events);
-//            } else {
-//                throw new ValidException("Invalid sort parameter", HttpStatus.BAD_REQUEST);
-//            }
-//        }
-//        return eventMapper.toEventByIdOutputDtoList(events);
-        return new ArrayList<>();
+        List<Event> events = eventStorage.findAllByOptionsForPublic(text, categories, paid, rangeStart, rangeEnd, pageable)
+                .getContent();
+        if (onlyAvailable) {
+            events.removeIf(event -> event.getConfirmedRequests().equals(event.getParticipantLimit()));
+        }
+        if (sort != null) {
+            if (sort.equals("VIEWS")) {
+                events = events.stream()
+                        .sorted(Comparator.comparing(Event::getViews).reversed())
+                        .collect(Collectors.toList());
+                return eventMapper.toEventByIdOutputDtoList(events);
+
+            } else if (sort.equals("EVENT_DATE")) {
+                events = events.stream()
+                        .sorted(Comparator.comparing(Event::getEventDate).reversed())
+                        .collect(Collectors.toList());
+                return eventMapper.toEventByIdOutputDtoList(events);
+            } else {
+                throw new ValidException("Invalid sort parameter", HttpStatus.BAD_REQUEST);
+            }
+        }
+        for (Event event : events) {
+            event.setViews(event.getViews() + 1);
+        }
+        eventStorage.saveAll(events);
+        return eventMapper.toEventByIdOutputDtoList(events);
     }
 
     @Override
