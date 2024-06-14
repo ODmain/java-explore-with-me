@@ -1,7 +1,9 @@
 package ru.practicum.explore_with_me.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import ru.practicum.explore_with_me.constant.Status;
 
 import java.time.LocalDateTime;
 
@@ -11,9 +13,10 @@ import java.time.LocalDateTime;
 @Builder(toBuilder = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class RequestOutputDto {
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", shape = JsonFormat.Shape.STRING)
     LocalDateTime created;
     Long event;
     Long id;
     Long requester;
-    String status;
+    Status status;
 }

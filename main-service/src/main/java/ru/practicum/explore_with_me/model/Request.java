@@ -22,10 +22,12 @@ public class Request {
     Long id;
     @Column(nullable = false)
     LocalDateTime created;
-    @Column(nullable = false)
-    Long event;
-    @Column(nullable = false)
-    Long requester;
+    @ManyToOne
+    @JoinColumn(name = "event_id", nullable = false)
+    Event event;
+    @ManyToOne
+    @JoinColumn(name = "requester_id", nullable = false)
+    User requester;
     @Column(nullable = false)
     Status status;
 }

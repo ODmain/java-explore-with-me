@@ -1,9 +1,9 @@
 package ru.practicum.explore_with_me.controller.priv;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
 import ru.practicum.explore_with_me.dto.event.*;
 import ru.practicum.explore_with_me.dto.request.RequestOutputDto;
 import ru.practicum.explore_with_me.service.api.priv.PrivateEventService;
@@ -27,8 +27,8 @@ public class PrivateEventController {
 
     @GetMapping
     public List<EventByIdOutputDto> getEventsByUserId(@PathVariable Long userId,
-                                                      @RequestParam Integer from,
-                                                      @RequestParam Integer size) {
+                                                      @RequestParam(defaultValue = "0") Integer from,
+                                                      @RequestParam(defaultValue = "10") Integer size) {
         return privateEventService.getEventsByUserId(userId, from, size);
     }
 
@@ -39,7 +39,7 @@ public class PrivateEventController {
     }
 
     @GetMapping("/{eventId}/requests")
-    public RequestOutputDto getOwnEventRequests(@PathVariable Long userId,
+    public List<RequestOutputDto> getOwnEventRequests(@PathVariable Long userId,
                                                 @PathVariable Long eventId) {
         return privateEventService.getOwnEventRequests(userId, eventId);
     }

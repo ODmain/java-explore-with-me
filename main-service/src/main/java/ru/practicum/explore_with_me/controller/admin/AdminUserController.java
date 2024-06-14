@@ -1,6 +1,7 @@
 package ru.practicum.explore_with_me.controller.admin;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -12,8 +13,9 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@Validated
 @RequiredArgsConstructor
+@Slf4j
+@Validated
 @RequestMapping("/admin/users")
 public class AdminUserController {
     private final AdminUserService userService;
@@ -26,8 +28,8 @@ public class AdminUserController {
 
     @GetMapping
     public List<UserOutputDto> getUsers(@RequestParam(required = false) List<Long> ids,
-                                        @RequestParam(required = false, defaultValue = "0") Integer from,
-                                        @RequestParam(required = false, defaultValue = "10") Integer size) {
+                                        @RequestParam(defaultValue = "0") Integer from,
+                                        @RequestParam(defaultValue = "10") Integer size) {
         return userService.getUsers(ids, from, size);
     }
 
@@ -36,5 +38,4 @@ public class AdminUserController {
     public void deleteUser(@PathVariable Long userId) {
         userService.deleteUser(userId);
     }
-
 }

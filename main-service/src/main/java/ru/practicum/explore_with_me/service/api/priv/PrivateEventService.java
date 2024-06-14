@@ -13,7 +13,7 @@ public interface PrivateEventService {
 
     EventOutputDto getEventById(Long userId, Long eventId);
 
-    RequestOutputDto getOwnEventRequests(Long userId, Long eventId);
+    List<RequestOutputDto> getOwnEventRequests(Long userId, Long eventId);
 
     EventOutputDto updateEvent(Long userId, Long eventId, UpdateEventDto updateEventDto);
 

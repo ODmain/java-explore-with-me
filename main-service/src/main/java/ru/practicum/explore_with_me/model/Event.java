@@ -13,7 +13,9 @@ import java.time.LocalDateTime;
 @Setter
 @ToString
 @Builder(toBuilder = true)
+@Entity
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@Table(name = "events")
 public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,6 +25,8 @@ public class Event {
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
     Category category;
+    @Column(name = "confirmed_requests", nullable = false)
+    Long confirmedRequests;
     @Column(nullable = false)
     LocalDateTime createdOn;
     @Column(nullable = false)
@@ -35,13 +39,13 @@ public class Event {
     @ManyToOne
     @JoinColumn(name = "location_id", nullable = false)
     Location location;
-    @Column(nullable = false)
+    @Column(name = "is_paid", nullable = false)
     Boolean paid;
-    @Column(nullable = false)
+    @Column(name = "participant_limit", nullable = false)
     Long participantLimit;
-    @Column(nullable = false)
+    @Column(name = "published_on", nullable = false)
     LocalDateTime publishedOn;
-    @Column(nullable = false)
+    @Column(name = "request_moderation", nullable = false)
     Boolean requestModeration;
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

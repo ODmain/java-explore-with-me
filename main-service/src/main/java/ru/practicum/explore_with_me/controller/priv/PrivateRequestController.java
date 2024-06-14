@@ -17,7 +17,7 @@ public class PrivateRequestController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public RequestOutputDto addRequest(@PathVariable Long userId,
-                                       @RequestParam(required = false) Long eventId) {
+                                       @RequestParam Long eventId) {
         return privateRequestService.addRequest(userId, eventId);
     }
 

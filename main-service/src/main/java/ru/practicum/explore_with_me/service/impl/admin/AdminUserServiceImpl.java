@@ -3,7 +3,6 @@ package ru.practicum.explore_with_me.service.impl.admin;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,6 +10,7 @@ import ru.practicum.explore_with_me.dto.user.UserInputDto;
 import ru.practicum.explore_with_me.dto.user.UserOutputDto;
 import ru.practicum.explore_with_me.exception.ValidException;
 import ru.practicum.explore_with_me.mapper.UserMapper;
+import ru.practicum.explore_with_me.model.User;
 import ru.practicum.explore_with_me.service.api.admin.AdminUserService;
 import ru.practicum.explore_with_me.storage.UserStorage;
 
@@ -27,13 +27,17 @@ public class AdminUserServiceImpl implements AdminUserService {
     @Override
     @Transactional
     public UserOutputDto createUser(UserInputDto userInputDto) {
+        User user = userStorage.findByEmail(userInputDto.getEmail());
+        if (user != null) {
+            throw new ValidException("This email is busy", HttpStatus.CONFLICT);
+        }
         return userMapper.toUserOutputDto(userStorage.save(userMapper.toUserFromInputDto(userInputDto)));
     }
 
     @Override
     public List<UserOutputDto> getUsers(List<Long> ids, Integer from, Integer size) {
-        Pageable pageable = PageRequest.of(from / size, size, Sort.by("id").descending());
-        if (ids.isEmpty()) {
+        Pageable pageable = PageRequest.of(from / size, size);
+        if (ids != null && !ids.isEmpty()) {
             return userStorage.findAllByIdIn(ids, pageable).getContent().stream()
                     .map(userMapper::toUserOutputDto)
                     .collect(Collectors.toList());

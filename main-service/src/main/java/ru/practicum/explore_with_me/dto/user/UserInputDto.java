@@ -3,7 +3,9 @@ package ru.practicum.explore_with_me.dto.user;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 @Data
 @NoArgsConstructor
@@ -11,8 +13,11 @@ import javax.validation.constraints.NotNull;
 @Builder(toBuilder = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserInputDto {
-    @NotNull(message = "Cannot be null or empty")
+    @NotBlank
+    @Email
+    @Size(min = 6, max = 254)
     String email;
-    @NotNull(message = "Cannot be null or empty")
+    @NotBlank
+    @Size(min = 2, max = 250)
     String name;
 }

@@ -2,7 +2,9 @@ package ru.practicum.explore_with_me.dto.event;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import ru.practicum.explore_with_me.constant.Status;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Data
@@ -11,6 +13,8 @@ import java.util.List;
 @Builder(toBuilder = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class EventUpdateRequestInputDto {
-    List<Long> requestsIds;
-    String status;
+    @NotNull
+    List<Long> requestIds;
+    @NotNull
+    Status status;
 }
