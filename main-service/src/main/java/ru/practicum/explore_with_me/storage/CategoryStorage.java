@@ -1,9 +1,0 @@
-package ru.practicum.explore_with_me.storage;
-
-import org.springframework.data.jpa.repository.JpaRepository;
-import ru.practicum.explore_with_me.model.Category;
-
-public interface CategoryStorage extends JpaRepository<Category, Long> {
-
-    Category findByName(String name);
-}
