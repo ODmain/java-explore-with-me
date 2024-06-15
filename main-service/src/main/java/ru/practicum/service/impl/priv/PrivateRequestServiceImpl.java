@@ -35,6 +35,18 @@ public class PrivateRequestServiceImpl implements PrivateRequestService {
         Event event = eventStorage.findById(eventId).orElseThrow(() ->
                 new ValidException("Event was not found", HttpStatus.NOT_FOUND));
         User user = validUser(userId);
+        if (event.getInitiator().getId().equals(userId)) {
+            throw new ValidException("Initiator can not participate in his event", HttpStatus.CONFLICT);
+        }
+        if (!event.getState().equals(State.PUBLISHED)) {
+            throw new ValidException("Event was not published", HttpStatus.CONFLICT);
+        }
+        List<Request> requests = requestStorage.findAllByEventId(eventId);
+        for (Request request : requests) {
+            if (request.getRequester().getId().equals(userId)) {
+                throw new ValidException("You are already participating", HttpStatus.CONFLICT);
+            }
+        }
         if (event.getParticipantLimit() == 0) {
             event.setConfirmedRequests(event.getConfirmedRequests() + 1);
             eventStorage.save(event);
@@ -45,20 +57,24 @@ public class PrivateRequestServiceImpl implements PrivateRequestService {
                     .status(Status.CONFIRMED)
                     .build()));
         }
-        if (!event.getState().equals(State.PUBLISHED)) {
-            throw new ValidException("Event was not published", HttpStatus.CONFLICT);
-        }
-        if (event.getInitiator().getId().equals(userId)) {
-            throw new ValidException("Initiator can not participate in his event", HttpStatus.CONFLICT);
-        }
-        if (event.getParticipantLimit() != 0 && event.getConfirmedRequests() + 1 > event.getParticipantLimit()) {
-            throw new ValidException("Guest limit exceeded", HttpStatus.CONFLICT);
-        }
-        List<Request> requests = requestStorage.findAllByEventId(eventId);
-        for (Request request : requests) {
-            if (request.getRequester().getId().equals(userId)) {
-                throw new ValidException("You are already participating", HttpStatus.CONFLICT);
+        if (!event.getRequestModeration()) {
+            Long count = requestStorage.countRequestByEventIdAndStatus(eventId, Status.CONFIRMED);
+            if (event.getParticipantLimit() != 0 && count.equals(event.getParticipantLimit())) {
+                throw new ValidException("Guest limit exceeded", HttpStatus.CONFLICT);
             }
+            event.setConfirmedRequests(event.getConfirmedRequests() + 1);
+            eventStorage.save(event);
+            return requestMapper.toRequestOutputDto(requestStorage.save(new Request().toBuilder()
+                    .created(LocalDateTime.now())
+                    .event(event)
+                    .requester(user)
+                    .status(Status.CONFIRMED)
+                    .build()));
+
+        }
+        Long count = requestStorage.countRequestByEventIdAndStatus(eventId, Status.CONFIRMED);
+        if (event.getParticipantLimit() != 0 && count.equals(event.getParticipantLimit())) {
+            throw new ValidException("Guest limit exceeded", HttpStatus.CONFLICT);
         }
         event.setConfirmedRequests(event.getConfirmedRequests() + 1);
         eventStorage.save(event);

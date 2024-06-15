@@ -18,7 +18,7 @@ import java.util.Map;
 public class StatisticsClient extends BaseClient {
 
     @Autowired
-    public StatisticsClient(@Value("${statistics-service.url://localhost:9090}") String serverUrl, RestTemplateBuilder builder) {
+    public StatisticsClient(@Value("${statistics-service.url:localhost:9090}") String serverUrl, RestTemplateBuilder builder) {
         super(
                 builder
                         .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl))

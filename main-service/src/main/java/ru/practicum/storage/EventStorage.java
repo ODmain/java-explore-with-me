@@ -19,7 +19,7 @@ public interface EventStorage extends JpaRepository<Event, Long> {
             "AND (e.state IN ?2 OR ?2 IS NULL) " +
             "AND (e.category.id IN ?3 OR ?3 IS NULL) " +
             "AND (e.eventDate BETWEEN ?4 AND ?5) " )
-    Page<Event> findEventsByOptions(List<Long> users, List<State> states, List<Long> categories, LocalDateTime rangeStart,
+    List<Event> findEventsByOptions(List<Long> users, List<State> states, List<Long> categories, LocalDateTime rangeStart,
                                     LocalDateTime rangeEnd, Pageable pageable);
 
     @Query(value = "SELECT e FROM Event e " +
@@ -28,7 +28,7 @@ public interface EventStorage extends JpaRepository<Event, Long> {
             "AND (e.category.id IN ?2 OR ?2 IS NULL)" +
             "AND (e.paid = ?3 OR ?3 IS NULL)" +
             "AND (e.eventDate BETWEEN ?4 AND ?5) ")
-    Page<Event> findAllByOptionsForPublic(String text, List<Long> categories, Boolean paid, LocalDateTime rangeStart,
+    List<Event> findAllByOptionsForPublic(String text, List<Long> categories, Boolean paid, LocalDateTime rangeStart,
                                           LocalDateTime rangeEnd, Pageable pageable);
 
 

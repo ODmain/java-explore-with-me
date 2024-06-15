@@ -91,10 +91,16 @@ public class AdminEventServiceImpl implements AdminEventService {
                 throw new ValidException("Start date is before end date", HttpStatus.BAD_REQUEST);
             }
         }
+        if (rangeStart == null) {
+            rangeStart = LocalDateTime.now().minusYears(100);
+        }
+
+        if (rangeEnd == null) {
+            rangeEnd = LocalDateTime.now().plusYears(100);
+        }
 
         Pageable pageable = PageRequest.of(from / size, size);
-        List<Event> events = eventStorage.findEventsByOptions(users, states, categories, rangeStart, rangeEnd, pageable)
-                .getContent();
+        List<Event> events = eventStorage.findEventsByOptions(users, states, categories, rangeStart, rangeEnd, pageable);
         return eventMapper.toEventOutputDtoList(events);
     }
 }
