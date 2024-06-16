@@ -9,6 +9,7 @@ import ru.practicum.mapper.StatisticsMapper;
 import ru.practicum.storage.StatisticsStorage;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -21,13 +22,16 @@ public class StatisticsServiceImpl implements StatisticsService {
     @Override
     @Transactional
     public void createHit(StatisticsInputHitDto statisticsInputHitDto) {
-        System.err.println(statisticsInputHitDto);
         statisticsStorage.save(statisticsMapper.toStatistics(statisticsInputHitDto));
     }
 
     @Override
     public List<StatisticsOutputDto> getStatistics(LocalDateTime start, LocalDateTime end, List<String> uris, Boolean unique) {
-        if (uris == null || uris.isEmpty()) {
+        List<String> uri = new ArrayList<>();
+        for (String s : uris) {
+            uri.add(s.replace("[", "").replace("]", ""));
+        }
+        if (uris.isEmpty()) {
             if (unique) {
                 return statisticsStorage.findAllUniqueStatisticsBetweenStartAndEnd(start, end);
             } else {
@@ -35,11 +39,9 @@ public class StatisticsServiceImpl implements StatisticsService {
             }
         } else {
             if (unique) {
-                List<StatisticsOutputDto> statisticsOutputDtos = statisticsStorage.findAllUniqueStatisticsByUrisBetweenStartAndEnd(start, end, uris);
-                System.err.println("serrr" + statisticsOutputDtos);
-                return statisticsStorage.findAllUniqueStatisticsByUrisBetweenStartAndEnd(start, end, uris);
+                return statisticsStorage.findAllUniqueStatisticsByUrisBetweenStartAndEnd(start, end, uri);
             } else {
-                return statisticsStorage.findAllStatisticsByUrisBetweenStartAndEnd(start, end, uris);
+                return statisticsStorage.findAllStatisticsByUrisBetweenStartAndEnd(start, end, uri);
             }
         }
     }
