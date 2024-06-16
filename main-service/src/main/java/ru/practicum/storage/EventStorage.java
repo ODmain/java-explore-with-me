@@ -18,7 +18,7 @@ public interface EventStorage extends JpaRepository<Event, Long> {
             "WHERE (e.initiator.id IN ?1 OR ?1 IS NULL) " +
             "AND (e.state IN ?2 OR ?2 IS NULL) " +
             "AND (e.category.id IN ?3 OR ?3 IS NULL) " +
-            "AND (e.eventDate BETWEEN ?4 AND ?5) " )
+            "AND (e.eventDate BETWEEN ?4 AND ?5) ")
     List<Event> findEventsByOptions(List<Long> users, List<State> states, List<Long> categories, LocalDateTime rangeStart,
                                     LocalDateTime rangeEnd, Pageable pageable);
 

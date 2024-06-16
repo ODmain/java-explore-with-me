@@ -4,7 +4,6 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 import ru.practicum.constant.Status;
 
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Data

@@ -11,6 +11,8 @@ import ru.practicum.dto.StatisticsInputHitDto;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
@@ -18,7 +20,7 @@ import java.util.Map;
 public class StatisticsClient extends BaseClient {
 
     @Autowired
-    public StatisticsClient(@Value("${statistics-service.url:localhost:9090}") String serverUrl, RestTemplateBuilder builder) {
+    public StatisticsClient(@Value("${stats-service.url}") String serverUrl, RestTemplateBuilder builder) {
         super(
                 builder
                         .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl))
@@ -31,19 +33,19 @@ public class StatisticsClient extends BaseClient {
         post(statisticsInputHitDto);
     }
 
-    public ResponseEntity<Object> getStatistics(String start, String end, List<String> uris, Boolean unique) {
-        String encodedStart = URLEncoder.encode(start, StandardCharsets.UTF_8);
-        String encodedEnd = URLEncoder.encode(end, StandardCharsets.UTF_8);
+    public ResponseEntity<Object> getStatistics(LocalDateTime start, LocalDateTime end, List<String> uris, Boolean unique) {
+        String newStart = start.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        String newEnd = end.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         if (uris == null || uris.isEmpty()) {
             Map<String, Object> parameters = Map.of(
-                    "start", encodedStart,
-                    "end", encodedEnd,
+                    "start", newStart,
+                    "end", newEnd,
                     "unique", unique);
             return get("/stats?start={start}&end={end}&unique={unique}", parameters);
         } else {
             Map<String, Object> parameters = Map.of(
-                    "start", encodedStart,
-                    "end", encodedEnd,
+                    "start", newStart,
+                    "end", newEnd,
                     "uris", uris,
                     "unique", unique);
             return get("/stats?start={start}&end={end}&uris={uris}&unique={unique}", parameters);

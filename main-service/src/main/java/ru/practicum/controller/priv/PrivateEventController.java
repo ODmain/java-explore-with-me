@@ -40,7 +40,7 @@ public class PrivateEventController {
 
     @GetMapping("/{eventId}/requests")
     public List<RequestOutputDto> getOwnEventRequests(@PathVariable Long userId,
-                                                @PathVariable Long eventId) {
+                                                      @PathVariable Long eventId) {
         return privateEventService.getOwnEventRequests(userId, eventId);
     }
 

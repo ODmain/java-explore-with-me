@@ -28,7 +28,6 @@ public class AdminEventController {
         return adminEventService.updateEvent(eventId, updateEventDto);
     }
 
-
     @GetMapping
     public List<EventOutputDto> getEvents(@RequestParam(required = false) List<Long> users,
                                           @RequestParam(required = false) List<State> states,
