@@ -24,6 +24,7 @@ import ru.practicum.storage.RequestStorage;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -44,9 +45,9 @@ public class PublicEventServiceImpl implements PublicEventService {
                                                  LocalDateTime rangeEnd, Boolean onlyAvailable,
                                                  String sort, Integer from, Integer size, HttpServletRequest servletRequest) {
         statisticsClient.createHit(StatisticsInputHitDto.builder()
-                .app("main-service")
-                .ip("/events")
-                .uri(servletRequest.getRequestURI())
+                .app("emw-main-service")
+                .uri("/events")
+                .ip(servletRequest.getRemoteAddr())
                 .timestamp(LocalDateTime.now())
                 .build());
 
@@ -105,8 +106,8 @@ public class PublicEventServiceImpl implements PublicEventService {
         }
         statisticsClient.createHit(StatisticsInputHitDto.builder()
                 .app("main-service")
-                .ip("/events/" + id)
-                .uri(servletRequest.getRequestURI())
+                .uri("/events/" + id)
+                .ip(servletRequest.getRemoteAddr())
                 .timestamp(LocalDateTime.now())
                 .build());
 
@@ -128,6 +129,7 @@ public class PublicEventServiceImpl implements PublicEventService {
         LocalDateTime endDate = LocalDateTime.now();
 
         ResponseEntity<Object> response = statisticsClient.getStatistics(startDate, endDate, uris, true);
+        System.err.println(response.getBody());
         Map<String, Long> result = new HashMap<>();
         if (response.getStatusCode() == HttpStatus.OK) {
             List<StatisticsOutputDto> statistics = objectMapper.convertValue(response.getBody(), new TypeReference<List<StatisticsOutputDto>>() {

@@ -21,6 +21,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     @Override
     @Transactional
     public void createHit(StatisticsInputHitDto statisticsInputHitDto) {
+        System.err.println(statisticsInputHitDto);
         statisticsStorage.save(statisticsMapper.toStatistics(statisticsInputHitDto));
     }
 
@@ -34,6 +35,8 @@ public class StatisticsServiceImpl implements StatisticsService {
             }
         } else {
             if (unique) {
+                List<StatisticsOutputDto> statisticsOutputDtos = statisticsStorage.findAllUniqueStatisticsByUrisBetweenStartAndEnd(start, end, uris);
+                System.err.println("serrr" + statisticsOutputDtos);
                 return statisticsStorage.findAllUniqueStatisticsByUrisBetweenStartAndEnd(start, end, uris);
             } else {
                 return statisticsStorage.findAllStatisticsByUrisBetweenStartAndEnd(start, end, uris);

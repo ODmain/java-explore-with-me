@@ -26,6 +26,6 @@ public class StatisticsInputHitDto {
     String ip;
     @NotNull(message = "Cannot be null or empty")
     @PastOrPresent
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", shape = JsonFormat.Shape.STRING)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     LocalDateTime timestamp;
 }

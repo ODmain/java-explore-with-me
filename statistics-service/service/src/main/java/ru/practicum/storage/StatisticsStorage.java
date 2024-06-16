@@ -10,34 +10,34 @@ import java.util.List;
 
 public interface StatisticsStorage extends JpaRepository<Statistics, Long> {
 
-    @Query("SELECT new ru.practicum.dto.StatisticsOutputDto(s.app, s.uri, COUNT(DISTINCT s.ip)) " +
-            "FROM Statistics s " +
-            "WHERE s.uri IN :uris " +
-            "AND s.timestamp BETWEEN :start AND :end " +
-            "GROUP BY s.app, s.uri " +
-            "ORDER BY COUNT(DISTINCT s.ip) DESC")
+    @Query("SELECT new ru.practicum.dto.StatisticsOutputDto (eph.app, eph.uri, count(distinct(eph.ip))) " +
+            "from Statistics as eph " +
+            "where eph.timestamp >= ?1 and eph.timestamp <= ?2 " +
+            "and eph.uri in ?3 " +
+            "group by eph.app, eph.uri " +
+            "order by count(distinct(eph.ip)) desc ")
     List<StatisticsOutputDto> findAllUniqueStatisticsByUrisBetweenStartAndEnd(LocalDateTime start, LocalDateTime end, List<String> uris);
 
-    @Query("SELECT new ru.practicum.dto.StatisticsOutputDto(s.app, s.uri, COUNT(s.ip)) " +
-            "FROM Statistics s " +
-            "WHERE s.uri IN :uris " +
-            "AND s.timestamp BETWEEN :start AND :end " +
-            "GROUP BY s.app, s.uri " +
-            "ORDER BY COUNT(s.ip) DESC")
+    @Query("SELECT new ru.practicum.dto.StatisticsOutputDto (eph.app, eph.uri, count(eph.ip)) " +
+            "from Statistics as eph " +
+            "where eph.timestamp >= ?1 and eph.timestamp <= ?2 " +
+            "and eph.uri in ?3 " +
+            "group by eph.app, eph.uri " +
+            "order by count(eph.ip) desc ")
     List<StatisticsOutputDto> findAllStatisticsByUrisBetweenStartAndEnd(LocalDateTime start, LocalDateTime end, List<String> uris);
 
-    @Query("SELECT new ru.practicum.dto.StatisticsOutputDto(s.app, s.uri, COUNT(DISTINCT s.ip)) " +
-            "FROM Statistics s " +
-            "WHERE s.timestamp BETWEEN :start AND :end " +
-            "GROUP BY s.app, s.uri " +
-            "ORDER BY COUNT(DISTINCT s.ip) DESC")
+    @Query("SELECT new ru.practicum.dto.StatisticsOutputDto (eph.app, eph.uri, count(distinct(eph.ip))) " +
+            "from Statistics as eph " +
+            "where eph.timestamp >= ?1 and eph.timestamp <= ?2 " +
+            "group by eph.app, eph.uri " +
+            "order by count(distinct(eph.ip)) desc ")
     List<StatisticsOutputDto> findAllUniqueStatisticsBetweenStartAndEnd(LocalDateTime start, LocalDateTime end);
 
-    @Query("SELECT new ru.practicum.dto.StatisticsOutputDto(s.app, s.uri, COUNT(s.ip)) " +
-            "FROM Statistics s " +
-            "WHERE s.timestamp BETWEEN :start AND :end " +
-            "GROUP BY s.app, s.uri " +
-            "ORDER BY COUNT(s.ip) DESC")
+    @Query("SELECT new ru.practicum.dto.StatisticsOutputDto (eph.app, eph.uri, count(eph.ip)) " +
+            "from Statistics as eph " +
+            "where eph.timestamp >= ?1 and eph.timestamp <= ?2 " +
+            "group by eph.app, eph.uri " +
+            "order by count(eph.ip) desc ")
     List<StatisticsOutputDto> findAllStatisticsBetweenStartAndEnd(LocalDateTime start, LocalDateTime end);
 
 }
