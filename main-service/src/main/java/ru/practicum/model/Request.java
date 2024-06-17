@@ -29,5 +29,6 @@ public class Request {
     @JoinColumn(name = "requester_id", nullable = false)
     User requester;
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     Status status;
 }

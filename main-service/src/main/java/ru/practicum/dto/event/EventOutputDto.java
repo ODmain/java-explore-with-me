@@ -8,6 +8,8 @@ import ru.practicum.dto.category.CategoryOutputDto;
 import ru.practicum.dto.location.LocationDto;
 import ru.practicum.dto.user.UserOutputDto;
 
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import java.time.LocalDateTime;
 
 @Data
@@ -32,6 +34,7 @@ public class EventOutputDto {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", shape = JsonFormat.Shape.STRING)
     LocalDateTime publishedOn;
     Boolean requestModeration;
+    @Enumerated(EnumType.STRING)
     State state;
     String title;
     Long views;

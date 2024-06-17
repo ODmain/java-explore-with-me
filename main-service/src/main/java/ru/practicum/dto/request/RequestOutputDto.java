@@ -5,6 +5,8 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 import ru.practicum.constant.Status;
 
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import java.time.LocalDateTime;
 
 @Data
@@ -18,5 +20,6 @@ public class RequestOutputDto {
     Long event;
     Long id;
     Long requester;
+    @Enumerated(EnumType.STRING)
     Status status;
 }
