@@ -3,7 +3,7 @@ services:
   ewm-stats:
     build: ./statistics-service/service
     image: service
-    container_name: statistics-service
+    container_name: service
     ports:
       - "9090:9090"
     depends_on:
@@ -32,8 +32,8 @@ services:
       - "8080:8080"
     depends_on:
       - ewm-db
+      - ewm-stats
     environment:
-      - STATS_SERVICE_URL=http://server:9090
       - SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.postgresql.Driver
       - SPRING_DATASOURCE_URL=jdbc:postgresql://ewm-db:5432/ewm-main-db
       - SPRING_DATASOURCE_USERNAME=root
