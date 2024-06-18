@@ -26,6 +26,8 @@ import java.util.List;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class AdminEventServiceImpl implements AdminEventService {
+    private final LocalDateTime start = LocalDateTime.now().minusYears(100);
+    private final LocalDateTime end = LocalDateTime.now().plusYears(100);
     private final EventStorage eventStorage;
     private final CategoryStorage categoryStorage;
     private final LocationService locationService;
@@ -92,11 +94,11 @@ public class AdminEventServiceImpl implements AdminEventService {
             }
         }
         if (rangeStart == null) {
-            rangeStart = LocalDateTime.now().minusYears(100);
+            rangeStart = start;
         }
 
         if (rangeEnd == null) {
-            rangeEnd = LocalDateTime.now().plusYears(100);
+            rangeEnd = end;
         }
 
         Pageable pageable = PageRequest.of(from / size, size);
