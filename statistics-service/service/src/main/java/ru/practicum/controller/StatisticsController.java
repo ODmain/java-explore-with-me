@@ -3,6 +3,7 @@ package ru.practicum.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -13,7 +14,6 @@ import ru.practicum.service.StatisticsService;
 
 import javax.validation.Valid;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @RestController
@@ -31,15 +31,13 @@ public class StatisticsController {
     }
 
     @GetMapping("/stats")
-    public List<StatisticsOutputDto> getStatistics(@RequestParam String start,
-                                                   @RequestParam String end,
+    public List<StatisticsOutputDto> getStatistics(@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime start,
+                                                   @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime end,
                                                    @RequestParam(required = false) List<String> uris,
                                                    @RequestParam(defaultValue = "false") Boolean unique) {
-        LocalDateTime newStart = LocalDateTime.parse(start, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-        LocalDateTime newEnd = LocalDateTime.parse(end, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-        validDate(newStart, newEnd);
+        validDate(start, end);
         log.info("Trying to get statistics.");
-        return statisticsService.getStatistics(newStart, newEnd, uris, unique);
+        return statisticsService.getStatistics(start, end, uris, unique);
     }
 
     private void validDate(LocalDateTime start, LocalDateTime end) {
